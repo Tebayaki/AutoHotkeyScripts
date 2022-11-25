@@ -1,13 +1,15 @@
-﻿gExcludesHwnds := GetClipboardFormatListenerList() ; 阻止一些剪贴板工具窗口触发
-; ; 粘贴后显示一个msgbox
-; f1::OnPaste(A_Clipboard, () => MsgBox("剪贴板文字已被获取"), gExcludesHwnds)
+﻿/*
+gExcludesHwnds := GetClipboardFormatListenerList() ; 阻止一些剪贴板工具窗口触发
+; 粘贴后显示一个msgbox
+f1::OnPaste(A_Clipboard, () => MsgBox("剪贴板文字已被获取"), gExcludesHwnds)
 
-; ; 粘贴后自动还原剪贴板
-; f2::{
-;     old := A_Clipboard
-;     OnPaste("剪贴板已还原", () => A_Clipboard := old, gExcludesHwnds)
-;     Send("^v")
-; }
+; 粘贴后自动还原剪贴板
+f2::{
+    old := A_Clipboard
+    OnPaste("剪贴板已还原", () => A_Clipboard := old, gExcludesHwnds)
+    Send("^v")
+}
+*/
 
 OnPaste(str, callback := unset, excludes := unset) {
     OnMessage(0x0305, WM_RENDERFORMAT, 0) ; 确保回调被更新

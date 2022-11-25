@@ -29,9 +29,16 @@ CONST.VT_RECORD       := 0x24,  ; User-defined type -- NOT SUPPORTED
 CONST.VT_ARRAY        := 0x2000,  ; SAFEARRAY
 CONST.VT_BYREF        := 0x4000  ; Pointer to another type of value
 
-class Interface {
-    static Call(ptr) => ptr && {Ptr: ptr, Base: this.Prototype}
+class IUnknown {
+    __New(ptr) {
+        if 0 == this.Ptr := ptr
+            throw Error("Invalid pointer", -1)
+    }
     __Delete() => this.Ptr && ObjRelease(this.Ptr)
+    QueryInterface(interface) {
+        ComCall(0, this, "ptr", interface.IID, "ptr*", &pvObject := 0)
+        return interface(pvObject)
+    }
 }
 
 CreateVariant(vt := 0, val := 0) {
@@ -114,9 +121,15 @@ TaskMemToString(pv){
     return str
 }
 
-CLSIDFromString(str) => (DllCall("ole32\CLSIDFromString", "str", str, "ptr", clsid := Buffer(16), "HRESULT"), clsid)
+IIDFromString(str) {
+    DllCall("ole32\IIDFromString", "str", str, "ptr", iid := Buffer(16), "HRESULT")
+    return iid
+}
 
-IIDFromString(str) => (DllCall("ole32\IIDFromString", "str", str, "ptr", clsid := Buffer(16), "HRESULT"), clsid)
+CLSIDFromString(str) {
+    DllCall("ole32\CLSIDFromString", "str", str, "ptr", clsid := Buffer(16), "HRESULT")
+    return clsid
+}
 
 IsEqualGUID(rguid1, rguid2) => DllCall("Ole32\IsEqualGUID", "ptr", rguid1, "ptr", rguid2)
 
@@ -128,8 +141,6 @@ CLSIDStringFromProgID(progid){
     DllCall("ole32\CLSIDFromProgID", "str", progid, "ptr", clsid := Buffer(16), "HRESULT")
     return StringFromCLSID(clsid)
 }
-
-CLSIDFromProgID(progid) => (DllCall("ole32\CLSIDFromProgID", "str", progid, "ptr", clsid := Buffer(16), "HRESULT"), clsid)
 
 ProgIDFromCLSID(clsid) {
     DllCall("ole32\ProgIDFromCLSID", "ptr", clsid, "ptr*", &lplpszProgID := 0, "HRESULT")

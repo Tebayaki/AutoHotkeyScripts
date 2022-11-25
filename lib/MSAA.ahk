@@ -1,4 +1,19 @@
 ﻿#DllLoad "Oleacc"
+CONST                         := CONST ?? {},
+CONST.OBJID_WINDOW            := 0x00000000,
+CONST.OBJID_SYSMENU           := 0xFFFFFFFF,
+CONST.OBJID_TITLEBAR          := 0xFFFFFFFE,
+CONST.OBJID_MENU              := 0xFFFFFFFD,
+CONST.OBJID_CLIENT            := 0xFFFFFFFC,
+CONST.OBJID_VSCROLL           := 0xFFFFFFFB,
+CONST.OBJID_HSCROLL           := 0xFFFFFFFA,
+CONST.OBJID_SIZEGRIP          := 0xFFFFFFF9,
+CONST.OBJID_CARET             := 0xFFFFFFF8,
+CONST.OBJID_CURSOR            := 0xFFFFFFF7,
+CONST.OBJID_ALERT             := 0xFFFFFFF6,
+CONST.OBJID_SOUND             := 0xFFFFFFF5,
+CONST.OBJID_QUERYCLASSNAMEIDX := 0xFFFFFFF4,
+CONST.OBJID_NATIVEOM          := 0xFFFFFFF0
 
 AccessibleObjectUnderCursor(&childId := 0) {
     DllCall("GetCursorPos", "Int64*", &pt := 0)

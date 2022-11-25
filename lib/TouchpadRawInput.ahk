@@ -1,5 +1,5 @@
+/*
 Persistent
-
 ; 初始化
 touchpad := TouchpadRawInput()
 ; 注册回调
@@ -21,7 +21,7 @@ fn(contactID, x, y, tip, confidence) {
 #HotIf touchpad.contacts[1].tip && touchpad.contacts[1].confidence && touchpad.contacts[1].x < 1500 && touchpad.contacts[1].y < 1000
 a:: ToolTip "手指放在触摸板左上角"
 #HotIf
-
+*/
 
 class TouchpadRawInput {
     static __ini := false

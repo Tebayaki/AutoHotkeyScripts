@@ -1,4 +1,5 @@
-﻿; Reference:
+﻿/*
+; Reference:
 ; https://www.cnblogs.com/wxl845235800/p/11079403.html
 ; https://blog.csdn.net/lz0499/article/details/77345166
 ; https://www.jianshu.com/p/86e8c3acd41d
@@ -11,6 +12,7 @@ DeltaE := GetDeltaEByHex(0x000000, 0xffffff)
 MsgBox("白色和黑色的色差为：" DeltaE)
 DeltaE := GetDeltaEByHex("0x4C974C", "0x4D78CC")
 MsgBox("蓝色和深蓝色的色差为：" DeltaE)
+*/
 
 GetDeltaEByHex(hex1, hex2) {
     RGB1 := Hex2RGB(hex1)
