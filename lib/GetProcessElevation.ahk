@@ -1,7 +1,7 @@
 ﻿GetProcessElevation(pid) {
     if !hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", pid)
         throw OSError()
-    if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0002 | 0x0001 | 0x0008, "ptr*", &hToken := 0) {
+    if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0008, "ptr*", &hToken := 0) {
         err := A_LastError, DllCall("CloseHandle", "ptr", hProcess)
         throw OSError(err)
     }
