@@ -43,10 +43,10 @@ RunAsUser() {
 RunWithProcessToken(pid, cmd) {
     hProcess := hTokenTargetProcess :=  hTokenDuplicate := 0
     DllCall("Ntdll\RtlAdjustPrivilege", "uint", 0x14, "char", 1, "char", 0, "ptr*", 0)
-    if !hProcess := DllCall("OpenProcess", "uint", 0x0400, "int", 1, "uint", pid) || DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", pid)
+    if !hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", pid)
         throw OSError()
     try {
-        if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0002 | 0x0001 | 0x0008, "ptr*", &hTokenTargetProcess)
+        if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0002 | 0x0008, "ptr*", &hTokenTargetProcess)
             throw OSError()
         if !DllCall("Advapi32\ImpersonateLoggedOnUser", "ptr", hTokenTargetProcess)
             throw OSError()
