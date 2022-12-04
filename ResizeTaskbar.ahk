@@ -1,6 +1,6 @@
-﻿ResizeTB(35)
+﻿ResizeTaskbar(35)
 
-ResizeTB(size) {
+ResizeTaskbar(size) {
     pAppBarData := Buffer(48), NumPut("uint", pAppBarData.Size, pAppBarData)
     DllCall("Shell32\SHAppBarMessage", "uint", 0x00000005, "ptr", pAppBarData)
     ; if taskbar is on left of screen
