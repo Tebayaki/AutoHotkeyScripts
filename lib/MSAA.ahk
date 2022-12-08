@@ -1,19 +1,4 @@
 ﻿#DllLoad "Oleacc"
-CONST                         := CONST ?? {},
-CONST.OBJID_WINDOW            := 0x00000000,
-CONST.OBJID_SYSMENU           := 0xFFFFFFFF,
-CONST.OBJID_TITLEBAR          := 0xFFFFFFFE,
-CONST.OBJID_MENU              := 0xFFFFFFFD,
-CONST.OBJID_CLIENT            := 0xFFFFFFFC,
-CONST.OBJID_VSCROLL           := 0xFFFFFFFB,
-CONST.OBJID_HSCROLL           := 0xFFFFFFFA,
-CONST.OBJID_SIZEGRIP          := 0xFFFFFFF9,
-CONST.OBJID_CARET             := 0xFFFFFFF8,
-CONST.OBJID_CURSOR            := 0xFFFFFFF7,
-CONST.OBJID_ALERT             := 0xFFFFFFF6,
-CONST.OBJID_SOUND             := 0xFFFFFFF5,
-CONST.OBJID_QUERYCLASSNAMEIDX := 0xFFFFFFF4,
-CONST.OBJID_NATIVEOM          := 0xFFFFFFF0
 
 AccessibleObjectUnderCursor(&childId := 0) {
     DllCall("GetCursorPos", "Int64*", &pt := 0)
@@ -30,6 +15,22 @@ AccessibleObjectFromPoint(x, y, &childId := 0) {
     return ComObjFromPtr(pacc)
 }
 
+/*
+@OBJID_ALERT ( ( LONG ) 0xFFFFFFF6 )
+@OBJID_CARET ( ( LONG ) 0xFFFFFFF8 )
+@OBJID_CLIENT ( ( LONG ) 0xFFFFFFFC )
+@OBJID_CURSOR ( ( LONG ) 0xFFFFFFF7 )
+@OBJID_HSCROLL ( ( LONG ) 0xFFFFFFFA )
+@OBJID_MENU ( ( LONG ) 0xFFFFFFFD )
+@OBJID_NATIVEOM ( ( LONG ) 0xFFFFFFF0 )
+@OBJID_QUERYCLASSNAMEIDX ( ( LONG ) 0xFFFFFFF4 )
+@OBJID_SIZEGRIP ( ( LONG ) 0xFFFFFFF9 )
+@OBJID_SOUND ( ( LONG ) 0xFFFFFFF5 )
+@OBJID_SYSMENU ( ( LONG ) 0xFFFFFFFF )
+@OBJID_TITLEBAR ( ( LONG ) 0xFFFFFFFE )
+@OBJID_VSCROLL ( ( LONG ) 0xFFFFFFFB )
+@OBJID_WINDOW ( ( LONG ) 0x00000000 )
+*/
 AccessibleObjectFromWindow(hwnd, objectId := 0) {
     DllCall("ole32\CLSIDFromString", "str", "{618736E0-3C3D-11CF-810C-00AA00389B71}", "ptr", clsid := Buffer(16), "HRESULT")
     DllCall("Oleacc\AccessibleObjectFromWindow", "ptr", hwnd, "uint", objectId, "ptr", clsid, "ptr*", &pacc := 0, "HRESULT")

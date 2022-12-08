@@ -1,21 +1,21 @@
-﻿CONST                     := CONST ?? {},
-CONST.WH_MSGFILTER        := -1,
-CONST.WH_JOURNALRECORD    := 0,
-CONST.WH_JOURNALPLAYBACK  := 1,
-CONST.WH_KEYBOARD         := 2,
-CONST.WH_GETMESSAGE       := 3,
-CONST.WH_CALLWNDPROC      := 4,
-CONST.WH_CBT              := 5,
-CONST.WH_SYSMSGFILTER     := 6,
-CONST.WH_MOUSE            := 7,
-CONST.WH_DEBUG            := 9,
-CONST.WH_SHELL            := 10,
-CONST.WH_FOREGROUNDIDLE   := 11,
-CONST.WH_CALLWNDPROCRET   := 12,
-CONST.WH_KEYBOARD_LL      := 13,
-CONST.WH_MOUSE_LL         := 14
+﻿/*
+@WH_FOREGROUNDIDLE 11
+@WH_GETMESSAGE 3
+@WH_JOURNALPLAYBACK 1
+@WH_JOURNALRECORD 0
+@WH_KEYBOARD 2
+@WH_KEYBOARD_LL 13
+@WH_MAX 14
+@WH_MAXHOOK WH_MAX
+@WH_MIN ( - 1 )
+@WH_MINHOOK WH_MIN
+@WH_MOUSE 7
+@WH_MOUSE_LL 14
+@WH_MSGFILTER ( - 1 )
+@WH_SHELL 10
+@WH_SYSMSGFILTER 6
 
-/*
+@Example
 Persistent
 SetLowLevelMouseHook(CallbackCreate(WindowsHookProc))
 WindowsHookProc(nCode, wParam, lParam) {
@@ -26,26 +26,15 @@ WindowsHookProc(nCode, wParam, lParam) {
     return CallNextHook(nCode, wParam, lParam)
 }
 */
+SetWindowsHookEx(idHook, lpfn, hmod, dwThreadId) => DllCall("SetWindowsHookEx", "int", idHook, "ptr", lpfn, "ptr", hmod, "uint", dwThreadId, "ptr")
 
-SetWindowsHookEx(idHook, lpfn, hmod, dwThreadId) {
-    return DllCall("SetWindowsHookEx", "int", idHook, "ptr", lpfn, "ptr", hmod, "uint", dwThreadId, "ptr")
-}
+UnhookWindowsHookEx(hHook) => DllCall("UnhookWindowsHookEx", "ptr", hHook)
 
-UnhookWindowsHookEx(hHook) {
-    return DllCall("UnhookWindowsHookEx", "ptr", hHook)
-}
+SetLowLevelMouseHook(lpfn) => DllCall("SetWindowsHookEx", "int", 14, "ptr", lpfn, "ptr", 0, "uint", 0, "ptr")
 
-SetLowLevelMouseHook(lpfn) {
-    return DllCall("SetWindowsHookEx", "int", CONST.WH_MOUSE_LL, "ptr", lpfn, "ptr", 0, "uint", 0, "ptr")
-}
+SetLowLevelKeyboardHook(lpfn) => DllCall("SetWindowsHookEx", "int", 13, "ptr", lpfn, "ptr", 0, "uint", 0, "ptr")
 
-SetLowLevelKeyboardHook(lpfn) {
-    return DllCall("SetWindowsHookEx", "int", CONST.WH_KEYBOARD_LL, "ptr", lpfn, "ptr", 0, "uint", 0, "ptr")
-}
-
-CallNextHook(nCode, wParam, lParam) {
-    return DllCall("CallNextHookEx", "ptr", 0, "int", nCode, "ptr", wParam, "ptr", lParam)
-}
+CallNextHook(nCode, wParam, lParam) => DllCall("CallNextHookEx", "ptr", 0, "int", nCode, "ptr", wParam, "ptr", lParam)
 
 class PKBDLLHOOKSTRUCT {
     __New(lParam) => this.Ptr := lParam
