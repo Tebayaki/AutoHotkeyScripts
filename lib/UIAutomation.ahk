@@ -724,6 +724,7 @@ class IUIAutomationTextRange extends IUnknown {
     ExpandToEnclosingUnit(textUnit) => ComCall(6, this, "int", textUnit)
     GetAttributeValue(attr) => (ComCall(9, this, "int", attr, "ptr", value := CreateVariant()), VariantValue(value))
     GetBoundingRectangles() => (ComCall(10, this, "ptr*", &boundingRects := 0), ComValue(0x2005, boundingRects))
+    GetText(maxLength := -1) => (ComCall(12, this, "int", maxLength, "ptr*", &text := 0), BStrToString(text))
 }
 
 class IUIAutomationTogglePattern extends IUnknown {
@@ -736,6 +737,7 @@ class IUIAutomationScrollItemPattern extends IUnknown {
 }
 
 class IUIAutomationLegacyIAccessiblePattern extends IUnknown {
+    CurrentState => (ComCall(11, this, "uint*", &pdwState := 0), pdwState)
 }
 
 class IUIAutomationItemContainerPattern extends IUnknown {
