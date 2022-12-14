@@ -125,7 +125,7 @@ Hash(data, algorithm) {
 CryptBinaryToString(binary, flag := 0x4000000C) {
     DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", flag, "ptr", 0, "uint*", &cnt := 0)
     VarSetStrCapacity(&str, cnt * 2)
-    DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", 0x4000000C, "wstr", str, "uint*", cnt)
+    DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", flag, "wstr", str, "uint*", cnt)
     return str
 }
 
