@@ -8,6 +8,7 @@ f1::{
 }
 */
 GetCaretPosEx(&x?, &y?, &w?, &h?) {
+    #Requires AutoHotkey v2.0-rc.1 64-bit
     x := h := w := h := 0
     static iUIAutomation := 0, hOleacc := 0, IID_IAccessible, guiThreadInfo, _ := init()
     if !iUIAutomation || ComCall(8, iUIAutomation, "ptr*", eleFocus := ComValue(13, 0), "int") || !eleFocus.Ptr
@@ -17,7 +18,7 @@ GetCaretPosEx(&x?, &y?, &w?, &h?) {
             return 0
     useAccLocation:
     ; use IAccessible::accLocation
-    hwndFocus := DllCall("GetGUIThreadInfo", "uint", DllCall("GetWindowThreadProcessId", "ptr", WinExist("A"), "ptr", 0, "uint"), "ptr", guiThreadInfo) && NumGet(guiThreadInfo, A_PtrSize == 8 ? 16 : 12, "ptr") || WinExist()
+    hwndFocus := DllCall("GetGUIThreadInfo", "uint", DllCall("GetWindowThreadProcessId", "ptr", WinExist("A"), "ptr", 0, "uint"), "ptr", guiThreadInfo) && NumGet(guiThreadInfo, 16, "ptr") || WinExist()
     if hOleacc && !DllCall("Oleacc\AccessibleObjectFromWindow", "ptr", hwndFocus, "uint", 0xFFFFFFF8, "ptr", IID_IAccessible, "ptr*", accCaret := ComValue(13, 0), "int") && accCaret.Ptr {
         NumPut("ushort", 3, varChild := Buffer(24, 0))
         if !ComCall(22, accCaret, "int*", &x := 0, "int*", &y := 0, "int*", &w := 0, "int*", &h := 0, "ptr", varChild, "int")
@@ -59,7 +60,7 @@ GetCaretPosEx(&x?, &y?, &w?, &h?) {
         return hwndFocus
     }
     useGUITHREADINFO:
-    if hwndCaret := NumGet(guiThreadInfo, A_PtrSize == 8 ? 48 : 28, "ptr") {
+    if hwndCaret := NumGet(guiThreadInfo, 48, "ptr") {
         if DllCall("GetWindowRect", "ptr", hwndCaret, "ptr", clientRect := Buffer(16)) {
             w := NumGet(guiThreadInfo, 64, "int") - NumGet(guiThreadInfo, 56, "int")
             h := NumGet(guiThreadInfo, 68, "int") - NumGet(guiThreadInfo, 60, "int")
@@ -75,6 +76,6 @@ GetCaretPosEx(&x?, &y?, &w?, &h?) {
             iUIAutomation := ComObject("{E22AD333-B25F-460C-83D0-0581107395C9}", "{30CBE57D-D9D0-452A-AB13-7AC5AC4825EE}")
         hOleacc := DllCall("LoadLibraryW", "str", "Oleacc.dll", "ptr")
         NumPut("int64", 0x11CF3C3D618736E0, "int64", 0x719B3800AA000C81, IID_IAccessible := Buffer(16))
-        guiThreadInfo := Buffer(A_PtrSize == 8 ? 72 : 48), NumPut("uint", guiThreadInfo.Size, guiThreadInfo)
+        guiThreadInfo := Buffer(72), NumPut("uint", guiThreadInfo.Size, guiThreadInfo)
     }
 }
