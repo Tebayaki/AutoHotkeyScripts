@@ -1,4 +1,28 @@
-﻿BubbleSort(arr, function) {
+﻿/*
+@Param arr 一个数组
+@Param function 自定义的排序函数对象，接受a, b两个参数，当a > b时返回正数，当a < b时返回负数，当a = b时返回0
+@Example
+arr := ["Cucumber", "Asparagus", "Broccoli", "张三", "李四", "王五", "1", "2", "3"]
+MsgBox(JoinArray(arr))
+BubbleSort(arr, CompareString) ; 冒泡排序, CompareString默认按拼音排序
+MsgBox(JoinArray(arr))
+
+arr := []
+loop 10
+    arr.Push(Random(-10, 10))
+MsgBox(JoinArray(arr))
+newArr := QuickSort(arr.Clone(), (a, b) => a - b) ; 快速排序, arr.Clone() 复制数组，防止arr被修改, (a, b) => a - b 从小到大排序
+MsgBox(JoinArray(newArr))
+
+JoinArray(arr, delimiter := "`n") {
+    res := ""
+    for i in arr
+        res .= i delimiter
+    return res
+}
+*/
+
+BubbleSort(arr, function) {
     loop arr.length - 1
         loop arr.length - A_Index
             if function(arr[A_Index], arr[A_Index + 1]) > 0
@@ -17,6 +41,17 @@ SelectionSort(arr, function) {
         }
         if min != A_Index
             temp := arr[min], arr[min] := arr[A_Index], arr[A_Index] := temp
+    }
+    return arr
+}
+
+InsertionSort(arr, function) {
+    i := 2, len := arr.Length
+    while i <= len {
+        temp := arr[j := i]
+        while j > 1 && function(arr[j - 1], temp) > 0
+            arr[j] := arr[j - 1], --j
+        arr[j] := temp, ++i
     }
     return arr
 }
@@ -46,23 +81,21 @@ QuickSort(arr, function) {
     return arr
 }
 
-CompareStringChinesePhoneBook(str1, str2) => DllCall("CompareStringEx", "wstr", "zh-CN_phoneb", "uint", 0, "wstr", str1, "int", -1, "wstr", str2, "int", -1, "ptr", 0, "ptr", 0, "ptr", 0) - 2
-
 /*
 locale name
 https://learn.microsoft.com/en-us/windows/win32/intl/sort-order-identifiers#:~:text=Constant-,Locale%20name,-Meaning
 
-@LINGUISTIC_IGNORECASE 0x00000010
-@LINGUISTIC_IGNOREDIACRITIC 0x00000020
+@define LINGUISTIC_IGNORECASE 0x00000010
+@define LINGUISTIC_IGNOREDIACRITIC 0x00000020
 
-@NORM_IGNORECASE 0x00000001
-@NORM_IGNOREKANATYPE 0x00010000
-@NORM_IGNORENONSPACE 0x00000002
-@NORM_IGNORESYMBOLS 0x00000004
-@NORM_IGNOREWIDTH 0x00020000
-@NORM_LINGUISTIC_CASING 0x08000000
+@define NORM_IGNORECASE 0x00000001
+@define NORM_IGNOREKANATYPE 0x00010000
+@define NORM_IGNORENONSPACE 0x00000002
+@define NORM_IGNORESYMBOLS 0x00000004
+@define NORM_IGNOREWIDTH 0x00020000
+@define NORM_LINGUISTIC_CASING 0x08000000
 
-@SORT_DIGITSASNUMBERS 0x00000008
-@SORT_STRINGSORT 0x00001000
+@define SORT_DIGITSASNUMBERS 0x00000008
+@define SORT_STRINGSORT 0x00001000
 */
-CompareString(str1, str2, locale, cmpFlags := 0) => DllCall("CompareStringEx", "wstr", locale, "uint", cmpFlags, "wstr", str1, "int", -1, "wstr", str2, "int", -1, "ptr", 0, "ptr", 0, "ptr", 0) - 2
+CompareString(str1, str2, locale := "zh-CN", cmpFlags := 0) => DllCall("CompareStringEx", "wstr", locale, "uint", cmpFlags, "wstr", str1, "int", -1, "wstr", str2, "int", -1, "ptr", 0, "ptr", 0, "ptr", 0) - 2
