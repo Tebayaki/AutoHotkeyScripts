@@ -1,4 +1,4 @@
-﻿guidGenWnd := Gui()
+﻿guidGenWnd := Gui(, "Guid Generator")
 guidGenWnd.SetFont("s10", "Consolas")
 uppercaseCheckBox := guidGenWnd.AddCheckbox("xm10 Section Checked", "Uppercase")
 withBraceCheckBox := guidGenWnd.AddCheckbox("ys Checked", "With Brace")
