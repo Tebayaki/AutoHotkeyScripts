@@ -1,7 +1,5 @@
-﻿/*
-@Version 0.1
-@Require AutoHotkey2.0+ x64
-*/
+﻿/* @Version 0.2 */
+#Requires AutoHotkey v2.0.0 64-bit
 #Include <ToolHelp>
 
 CONST := CONST ?? {}
@@ -96,13 +94,13 @@ class RemoteProcess {
     static __TypeSize := {Char: 1, UChar: 1, Short: 2, UShort: 2, Int: 4, UInt: 4, Ptr: A_PtrSize, UPtr: A_PtrSize, Int64: 8, UInt64: 8, Float: 4, Double: 8}
 
     static FromProcessName(processname) {
-        if !processEntry := ToolHelpFindProcessByName(processname)
+        if !pid := ProcessExist(processname)
             throw Error("Cannot find the process.")
-        return this.FromProcessId(processEntry.th32ProcessID)
+        return this.FromProcessId(pid)
     }
 
-    static FromWindow(hwnd) {
-        if !DllCall("GetWindowThreadProcessId", "ptr", hwnd, "uint*", &processId := 0)
+    static FromWindow(winTitle) {
+        if !DllCall("GetWindowThreadProcessId", "ptr", WinExist(winTitle), "uint*", &processId := 0)
             throw OSError()
         return this.FromProcessId(processId)
     }

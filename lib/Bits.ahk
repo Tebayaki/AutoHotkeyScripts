@@ -50,3 +50,15 @@ ClientToScreen(clientX, clientY, &screenX, &screenY, window := "A") {
     }
     return res
 }
+
+GetUnixTimestamp() {
+    DllCall("GetSystemTimeAsFileTime", "uint64*", &currentTime := 0)
+    return currentTime - 116444736000000000
+}
+
+GetProcessElapsedTime(pidOrName) {
+    hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", false, "uint", ProcessExist(pidOrName), "ptr")
+    DllCall("GetProcessTimes", "ptr", hProcess, "uint64*", &creationTime := 0, "uint64*", 0, "uint64*", 0, "uint64*", 0, "int")
+    DllCall("GetSystemTimeAsFileTime", "uint64*", &currentTime := 0)
+    return currentTime - creationTime ; (currentTime - creationTime) / 1e7 ms
+}
