@@ -1,4 +1,5 @@
-﻿ImportTypeHelper() {
+﻿ImportTypeHelper()
+ImportTypeHelper() {
     Any.Prototype.DefineProp := Object.Prototype.DefineProp
     Any.Prototype.DefineProp("Type", {Get: Type})
 
