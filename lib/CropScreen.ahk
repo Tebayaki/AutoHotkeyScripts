@@ -86,7 +86,7 @@ CropScreen() {
         displayDc := DllCall("CreateCompatibleDC", "ptr", screenDc)
         displayBmp := DllCall("CreateCompatibleBitmap", "ptr", screenDc, "int", A_ScreenWidth, "int", A_ScreenHeight)
         DllCall("SelectObject", "ptr", displayDc, "ptr", displayBmp)
-        bluePen := DllCall("CreatePen", "int", 6, "int", 3, "uint", 0xfe4f7f)
+        bluePen := DllCall("CreatePen", "int", 6, "int", 3, "uint", 0xFE4F7F)
         DllCall("SelectObject", "ptr", displayDc, "ptr", bluePen)
         DllCall("SelectObject", "ptr", displayDc, "ptr", DllCall("GetStockObject", "int", 5))
         DllCall("BitBlt", "ptr", displayDc, "int", 0, "int", 0, "int", A_ScreenWidth, "int", A_ScreenHeight, "ptr", originDc, "int", 0, "int", 0, "uint", 0x00CC0020)

@@ -39,11 +39,11 @@ RunAsUser() {
     }
 }
 
-; RunWithProcessToken(ProcessExist("winlogon.exe"), "cmd /k whoami")
-RunWithProcessToken(pid, cmd) {
+; RunWithProcessToken("winlogon.exe", "cmd /k whoami")
+RunWithProcessToken(pidOrName, cmd, workingDir := A_WorkingDir, option := "Normal", &outputVarPid := 0, wait := false) {
     hProcess := hTokenTargetProcess :=  hTokenDuplicate := 0
     DllCall("Ntdll\RtlAdjustPrivilege", "uint", 0x14, "char", 1, "char", 0, "ptr*", 0)
-    if !hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", pid)
+    if !hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", ProcessExist(pidOrName))
         throw OSError()
     try {
         if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0002 | 0x0008, "ptr*", &hTokenTargetProcess)
@@ -54,11 +54,28 @@ RunWithProcessToken(pid, cmd) {
         if !DllCall("Advapi32\DuplicateTokenEx", "ptr", hTokenTargetProcess, "uint", 0x0080 | 0x0100 | 0x0008 | 0x0002 | 0x0001, "ptr", 0, "uint", 2, "uint", 1, "ptr*", &hTokenDuplicate, "int")
             throw OSError()
         pStartInfo := Buffer(104, 0), pProcessInfo := Buffer(24)
-        NumPut("uint", pStartInfo.Size, pStartInfo, 0), NumPut("ptr", StrPtr("winsta0\default"), pStartInfo, 16), NumPut("ushort", 1, pStartInfo, 64)
-        if !DllCall("Advapi32\CreateProcessWithTokenW", "ptr", hTokenDuplicate, "uint", 0, "ptr", 0, "wstr", cmd, "uint", 0x00000010, "ptr", 0, "ptr", 0, "ptr", pStartInfo, "ptr", pProcessInfo)
+        NumPut("uint", pStartInfo.Size, pStartInfo, 0), NumPut("ptr", StrPtr("winsta0\default"), pStartInfo, 16), NumPut("uint", 1, pStartInfo, 60)
+        switch option, "Off" {
+            case "Hide":
+                nCmdShow := 0
+            case "Min":
+                nCmdShow := 2
+            case "Max":
+                nCmdShow := 3
+            default:
+                nCmdShow := 1
+        }
+        NumPut("ushort", nCmdShow, pStartInfo, 64)
+        if !DllCall("Advapi32\CreateProcessWithTokenW", "ptr", hTokenDuplicate, "uint", 0, "ptr", 0, "str", cmd, "uint", 0x00000010, "ptr", 0, "str", workingDir, "ptr", pStartInfo, "ptr", pProcessInfo)
             throw OSError()
-        DllCall("CloseHandle", "ptr", NumGet(pProcessInfo, 0, "ptr"))
         DllCall("CloseHandle", "ptr", NumGet(pProcessInfo, 8, "ptr"))
+        hNewProcess := NumGet(pProcessInfo, "ptr")
+        outputVarPid := NumGet(pProcessInfo, 16, "uint")
+        if wait {
+            ProcessWaitClose(outputVarPid)
+            DllCall("GetExitCodeProcess", "ptr", hNewProcess, "uint*", &exitCode := 0)
+        }
+        DllCall("CloseHandle", "ptr", hNewProcess)
     }
     catch as e {
         throw e
@@ -71,5 +88,5 @@ RunWithProcessToken(pid, cmd) {
         if hProcess
             DllCall("CloseHandle", "ptr", hProcess)
     }
-    return NumGet(pProcessInfo, 16, "uint")
+    return exitCode ?? ""
 }
