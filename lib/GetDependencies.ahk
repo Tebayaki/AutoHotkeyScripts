@@ -38,7 +38,7 @@ GetDependencies(path, delayLoad := false, recurse := false, workingDir := A_Work
             return
         }
         DllCall("CloseHandle", "ptr", hFileMapping)
-        fileBuf := { Ptr: imageBase, Size: fileObj.Length }
+        fileBuf := { Ptr: imageBase, Size: fileObj.Length, __Delete: (_) => DllCall("UnmapViewOfFile", "ptr", _) }
         ; Check Signature
         if NumGet(fileBuf, "ushort") != 0x5A4D {
             return
