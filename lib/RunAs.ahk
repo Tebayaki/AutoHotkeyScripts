@@ -39,6 +39,70 @@ RunAsUser() {
     }
 }
 
+RunWithUIAccess() {
+    try {
+        hCurrentToken := hProcess := hWinLogonToken := hSystemToken := hUIAccessToken := 0
+        ; Check if we have UIAccess
+        if !DllCall("OpenProcessToken", "ptr", DllCall("GetCurrentProcess", "ptr"), "uint", 8 | 2, "ptr*", &hCurrentToken) {
+            throw OSError()
+        }
+        if !DllCall("Advapi32\GetTokenInformation", "ptr", hCurrentToken, "int", 26, "uint*", &hasUIAccess := 0, "uint", 4, "uint*", 0) {
+            throw OSError()
+        }
+        if hasUIAccess {
+            return
+        }
+        ; Get system token from winlogon
+        DllCall("Ntdll\RtlAdjustPrivilege", "uint", 0x14, "char", 1, "char", 0, "ptr*", 0)
+        if !hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 1, "uint", ProcessExist("winlogon.exe")) {
+            throw OSError()
+        }
+        if !DllCall("OpenProcessToken", "ptr", hProcess, "uint", 0x0002 | 0x0008, "ptr*", &hWinLogonToken) {
+            throw OSError()
+        }
+        if !DllCall("Advapi32\ImpersonateLoggedOnUser", "ptr", hWinLogonToken) {
+            throw OSError()
+        }
+        DllCall("Advapi32\RevertToSelf")
+        if !DllCall("Advapi32\DuplicateTokenEx", "ptr", hWinLogonToken, "uint", 4, "ptr", 0, "uint", 2, "uint", 2, "ptr*", &hSystemToken) {
+            throw OSError()
+        }
+        if !DllCall("SetThreadToken", "ptr", 0, "ptr", hSystemToken) {
+            throw OSError()
+        }
+        if !DllCall("Advapi32\DuplicateTokenEx", "ptr", hCurrentToken, "uint", 8 | 2 | 1 | 0x80, "ptr", 0, "uint", 0, "uint", 1, "ptr*", &hUIAccessToken) {
+            throw OSError()
+        }
+        if !DllCall("Advapi32\SetTokenInformation", "ptr", hUIAccessToken, "uint", 26, "uint*", 1, "uint", 4) {
+            throw OSError()
+        }
+        startInfo := Buffer(104)
+        processInfo := Buffer(24)
+        DllCall("GetStartupInfoW", "ptr", startInfo)
+        if !DllCall("CreateProcessAsUserW", "ptr", hUIAccessToken, "ptr", 0, "ptr", DllCall("GetCommandLineW", "ptr"), "ptr", 0, "ptr", 0, "int", false, "uint", 0, "ptr", 0, "ptr", 0, "ptr", startInfo, "ptr", processInfo) {
+            throw OSError()
+        }
+        DllCall("CloseHandle", "ptr", NumGet(processInfo, "ptr"))
+        DllCall("CloseHandle", "ptr", NumGet(processInfo, A_PtrSize, "ptr"))
+    }
+    catch as e {
+        throw e
+    }
+    finally {
+        if hCurrentToken
+            DllCall("CloseHandle", "ptr", hCurrentToken)
+        if hProcess
+            DllCall("CloseHandle", "ptr", hProcess)
+        if hWinLogonToken
+            DllCall("CloseHandle", "ptr", hWinLogonToken)
+        if hSystemToken
+            DllCall("CloseHandle", "ptr", hSystemToken)
+        if hUIAccessToken
+            DllCall("CloseHandle", "ptr", hUIAccessToken)
+    }
+    ExitApp
+}
+
 ; RunWithProcessToken("winlogon.exe", "cmd /k whoami")
 RunWithProcessToken(pidOrName, cmd, workingDir := A_WorkingDir, option := "Normal", &outputVarPid := 0, wait := false) {
     hProcess := hTokenTargetProcess :=  hTokenDuplicate := 0
