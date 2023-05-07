@@ -10,23 +10,23 @@ ShellMessageHandler(wParam, lParam, *) {
             if lParam !== 0 {
                 if WinGetClass(lParam) == "ApplicationFrameWindow" {
                     try
-                        SetImeStatus(false, ControlGetHwnd("Windows.UI.Core.CoreWindow1", lParam))
+                        IME.SetInputMode(false, ControlGetHwnd("Windows.UI.Core.CoreWindow1", lParam))
                     catch
-                        SetImeStatus(false, lParam)
+                        IME.SetInputMode(false, lParam)
                 }
                 else {
-                    SetImeStatus(false, lParam)
+                    IME.SetInputMode(false, lParam)
                 }
             }
             else {
-                SetImeStatus(false)
+                IME.SetInputMode(false)
             }
         }
         else if wParam == CONST.HSHELL_WINDOWDESTROYED || wParam == 54 {
             if lParam !== 0 && WinGetClass(lParam) == "Windows.UI.Core.CoreWindow" {
                 loop 10 {
-                    if GetImeStatus(lParam) {
-                        SetImeStatus(false, lParam)
+                    if IME.GetInputMode(lParam) {
+                        IME.SetInputMode(false, lParam)
                         return
                     }
                     Sleep(20)

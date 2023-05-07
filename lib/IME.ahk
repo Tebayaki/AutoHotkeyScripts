@@ -29,6 +29,10 @@ class IME {
         }
     }
 
+    static ToggleInputMode(hwnd := this.GetFocusedWindow()) {
+        this.SetInputMode(!this.GetInputMode(hwnd), hwnd)
+    }
+
     static GetOpenStatus(hwnd := this.GetFocusedWindow()) {
         DllCall("SendMessageTimeoutW", "ptr", DllCall("imm32\ImmGetDefaultIMEWnd", "ptr", hwnd, "ptr"), "uint", 0x283, "ptr", 0x5, "ptr", 0, "uint", 0, "uint", 200, "ptr*", &status := 0)
         return status
