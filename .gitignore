@@ -33,6 +33,7 @@
 
 # folders
 private/
+lib/3rdparty/
 .vs/
 x64/
 */x64/
