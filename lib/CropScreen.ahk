@@ -1,8 +1,12 @@
 ﻿/*
 @Example
-data := CropScreen()
-MsgBox(data.Left " " data.Top " " data.Right " " data.Bottom)
-MsgBox(ocr.ocr_from_bitmapdata(data.BitmapBuffer))
+info := CropScreen()
+MsgBox(info.Left " " info.Top " " info.Right " " info.Bottom)
+ui := Gui()
+ui.AddPicture(, "HBITMAP:" info.HBitmap)
+ui.Show()
+; RapidOcr
+; MsgBox(ocr.ocr_from_bitmapdata(info.BitmapData))
 */
 CropScreen() {
     static count := 0
@@ -141,8 +145,8 @@ CropScreen() {
         DllCall("DeleteDC", "ptr", hMemDc)
         bitmap := Buffer(32, 0)
         DllCall("GetObjectW", "ptr", hBmp, "int", 32, "ptr", bitmap)
-        bitmapBuffer := Buffer(24)
-        NumPut("ptr", pData, "uint", NumGet(bitmap, 12, "uint"), "int", NumGet(bitmap, 4, "int"), "int", NumGet(bitmap, 8, "int"), "int", 4, bitmapBuffer, 0)
+        bitmapData := Buffer(24)
+        NumPut("ptr", pData, "uint", NumGet(bitmap, 12, "uint"), "int", NumGet(bitmap, 4, "int"), "int", NumGet(bitmap, 8, "int"), "int", 4, bitmapData, 0)
         return { Left: left,
             Top: top,
             Right: right,
@@ -150,7 +154,7 @@ CropScreen() {
             Width: width,
             Height: height,
             HBitmap: hBmp,
-            BitmapBuffer: bitmapBuffer,
+            BitmapData: bitmapData,
             __Delete: (this) => DllCall("DeleteObject", "ptr", this.HBitmap)
         }
     }
