@@ -1,5 +1,5 @@
 ﻿; InjectLib(WinGetPID("ahk_class Notepad"), "dllname.dll")
-; EjectLib(WinGetPID("ahk_class Notepad"), "dll1name.dll")
+; EjectLib(WinGetPID("ahk_class Notepad"), "dllname.dll")
 
 InjectLib(pid, filepath) {
     try {
