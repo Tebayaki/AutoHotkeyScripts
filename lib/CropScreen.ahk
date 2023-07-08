@@ -1,13 +1,24 @@
 ﻿/*
 @Example
+; 选择屏幕范围并显示
 info := CropScreen()
 MsgBox(info.Left " " info.Top " " info.Right " " info.Bottom)
 ui := Gui()
 ui.AddPicture(, "HBITMAP:" info.HBitmap)
 ui.Show()
-; RapidOcr
-; MsgBox(ocr.ocr_from_bitmapdata(info.BitmapData))
+
+@Example
+; ocr屏幕范围
+#Include <RapidOcrOnnx\RapidOcrOnnx>
+ocr := RapidOcrOnnx()
+info := CropScreen()
+MsgBox ocr.DetectHBitmap(info.HBitmap).ToString()
 */
+; ocr屏幕范围
+#Include <RapidOcrOnnx\RapidOcrOnnx>
+ocr := RapidOcrOnnx()
+info := CropScreen()
+MsgBox ocr.DetectHBitmap(info.HBitmap).ToString()
 CropScreen() {
     static count := 0
     res := ""
@@ -137,17 +148,28 @@ CropScreen() {
         bmpInfo := Buffer(40, 0)
         width := right - left
         height := bottom - top
-        NumPut("uint", bmpInfo.Size, "int", width, "int", -height, "short", 1, "short", 32, bmpInfo)
+        NumPut("uint", bmpInfo.Size, "int", width, "int", height, "short", 1, "short", 32, bmpInfo)
         hMemDc := DllCall("CreateCompatibleDC", "ptr", originDc)
         hBmp := DllCall("CreateDIBSection", "ptr", hMemDc, "ptr", bmpInfo, "uint", 0, "ptr*", &pData := 0, "ptr", 0, "uint", 0)
         DllCall("SelectObject", "ptr", hMemDc, "ptr", hBmp)
         DllCall("BitBlt", "ptr", hMemDc, "int", 0, "int", 0, "int", width, "int", height, "ptr", originDc, "int", left, "int", top, "uint", 0x00CC0020)
         DllCall("DeleteDC", "ptr", hMemDc)
         bitmap := Buffer(32, 0)
-        DllCall("GetObjectW", "ptr", hBmp, "int", 32, "ptr", bitmap)
+        DllCall("GetObjectW", "ptr", hBmp, "int", bitmap.Size, "ptr", bitmap)
         bitmapData := Buffer(24)
-        NumPut("ptr", pData, "uint", NumGet(bitmap, 12, "uint"), "int", NumGet(bitmap, 4, "int"), "int", NumGet(bitmap, 8, "int"), "int", 4, bitmapData, 0)
-        return { Left: left,
+        pData := NumGet(bitmap, 24, "ptr")
+        stride := NumGet(bitmap, 12, "uint")
+        width := NumGet(bitmap, 4, "int")
+        height := NumGet(bitmap, 8, "int")
+        pixelBytes := NumGet(bitmap, 18, "ushort") // 8
+        data := Buffer(stride * height)
+        loop height {
+            DllCall("RtlCopyMemory", "ptr", data.Ptr + (A_Index - 1) * stride, "ptr", pData + (height - A_Index) * stride, "uptr", stride)
+        }
+        NumPut("ptr", data.Ptr, "uint", stride, "int", width, "int", height, "int", 4, bitmapData)
+        bitmapData.__data := data
+        return {
+            Left: left,
             Top: top,
             Right: right,
             Bottom: bottom,
@@ -155,6 +177,7 @@ CropScreen() {
             Height: height,
             HBitmap: hBmp,
             BitmapData: bitmapData,
+            Show: (this) => (ui := Gui(), ui.AddPicture(, "HBITMAP:" this.HBitmap), ui.Show()),
             __Delete: (this) => DllCall("DeleteObject", "ptr", this.HBitmap)
         }
     }
