@@ -24,10 +24,9 @@ CropScreen() {
     _lastBoxRect := { X1: 0, Y1: 0, X2: 0, Y2: 0, W: 0, H: 0 }
     _lastSelectionRectBuf := Buffer(16, 0)
     _lastBoxRectBuf := Buffer(16, 0)
-
+    _cursor := DllCall("LoadCursorW", "ptr", 0, "ptr", 32515)
     _pen := DllCall("CreatePen", "int", 6, "int", _thickness, "uint", _color)
     _nullClipRgn := DllCall("CreateRectRgn", "int", 0, "int", 0, "int", A_ScreenWidth, "int", A_ScreenHeight, "ptr")
-
     win := Gui("-Caption")
     _winDc := DllCall("GetDC", "ptr", win.Hwnd)
 
@@ -64,6 +63,7 @@ CropScreen() {
 
     win.OnMessage(0x0010, OnWM_CLOSE)
     win.OnMessage(0x0014, OnWM_ERASEBKGND)
+    win.OnMessage(0x0020, OnWM_SETCURSOR)
     win.OnMessage(0x0100, OnWM_KEYDOWN)
     win.OnMessage(0x0200, OnWM_MOUSEMOVE)
     win.OnMessage(0x0201, OnWM_LBUTTONDOWN)
@@ -208,6 +208,11 @@ CropScreen() {
 
     OnWM_ERASEBKGND(this, wParam, lParam, msg) {
         DllCall("BitBlt", "ptr", _winDc, "int", 0, "int", 0, "int", A_ScreenWidth, "int", A_ScreenHeight, "ptr", _bkgDc, "int", 0, "int", 0, "uint", 0x00CC0020)
+        return 0
+    }
+
+    OnWM_SETCURSOR(this, wParam, lParam, msg) {
+        DllCall("SetCursor", "ptr", _cursor)
         return 0
     }
 
