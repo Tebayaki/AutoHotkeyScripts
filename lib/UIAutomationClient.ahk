@@ -3645,11 +3645,7 @@ UIAUtils_ArrayToSafeArray(type, arr) {
     return sa
 }
 UIAUtils_SafeArrayToArray(type, psa) {
-    arr := []
-    for v in ComValue(0x2000 | type, psa) {
-        arr.Push(v)
-    }
-    return arr
+    return [ComValue(0x2000 | type, psa)*]
 }
 UIAUtils_IUnknownArrayToSafeArray(arr) {
     sa := ComObjArray(0xD, arr.Length)
@@ -3659,18 +3655,16 @@ UIAUtils_IUnknownArrayToSafeArray(arr) {
     return sa
 }
 UIAUtils_IUnknownSafeArrayToArray(psa, wrapper?) {
-    arr := []
     if IsSet(wrapper) {
+        arr := []
         for v in ComValue(0x200D, psa) {
             arr.Push(wrapper(v))
         }
+        return arr
     }
     else {
-        for v in ComValue(0xD, psa) {
-            arr.Push(v)
-        }
+        return [ComValue(0x200D, psa)*]
     }
-    return arr
 }
 UIAUtils_ArrayToNativeArray(type, arr) {
     na := NumNativeArray(type, arr.Length)
