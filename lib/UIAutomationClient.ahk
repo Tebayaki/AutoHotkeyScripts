@@ -49,7 +49,7 @@ class NumNativeArray {
             this.Ptr := ptr
         }
         else {
-            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uint", this.Size, "ptr")
+            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uptr", this.Size, "ptr")
         }
     }
     __Delete() => DllCall("Ole32\CoTaskMemFree", "ptr", this)
@@ -69,7 +69,7 @@ class ComObjNativeArray {
             this.Ptr := ptr
         }
         else {
-            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uint", this.Size, "ptr")
+            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uptr", this.Size, "ptr")
         }
     }
     __Delete() {
@@ -104,7 +104,7 @@ class StructNativeArray extends NumNativeArray {
             this.Ptr := ptr
         }
         else {
-            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uint", this.Size, "ptr")
+            this.Ptr := DllCall("Ole32\CoTaskMemAlloc", "uptr", this.Size, "ptr")
         }
     }
     __Delete() => DllCall("Ole32\CoTaskMemFree", "ptr", this)
