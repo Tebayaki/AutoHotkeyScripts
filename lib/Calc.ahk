@@ -145,7 +145,7 @@ Calc(expr) {
         }
     }
     NextToken() {
-        if tokenPos := RegExMatch(expr, "S)\G\s*(0[xX][0-9a-fA-F]+|\d+(?:\.\d+)?|>>>|<<|>>|<=|>=|==|!=|&&|\|\||\/\/|[()+\-*\/!~%<>&^|?:]|$)", &m, pos) {
+        if tokenPos := RegExMatch(expr, "S)\G\s*(0[xX][0-9a-fA-F]+|\d+(?:\.\d+)?(?:e-?\d+)?|>>>|<<|>>|<=|>=|==|!=|&&|\|\||\/\/|[()+\-*\/!~%<>&^|?:]|$)", &m, pos) {
             pos := tokenPos + m.Len
             if m[1] == ""
                 return { Kind: "EOF" }
