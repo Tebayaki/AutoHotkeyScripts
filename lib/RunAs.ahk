@@ -1,9 +1,10 @@
 ﻿RunAsAdmin()
 
 RunAsAdmin() {
-    if !A_IsAdmin && !(DllCall("GetCommandLine", "str") ~= " /restart(?!\S)") {
-        try Run('*RunAs "' (A_IsCompiled ? A_ScriptFullPath '" /restart' : A_AhkPath '" /restart "' A_ScriptFullPath '"'))
-        ExitApp
+    if !A_IsAdmin {
+        cmd := DllCall("GetCommandLineW", "str")
+        if !RegExMatch(cmd, " /restart(?!\S)")
+            RunWait("*RunAs " RegExReplace(cmd, '^\".*?\"\K|^\S*\K', " /restart"))
     }
 }
 
