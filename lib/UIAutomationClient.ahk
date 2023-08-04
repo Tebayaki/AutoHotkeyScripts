@@ -1,22 +1,3 @@
-UIA_WaitChild(parent, condition, scope := 4, timeout := 0) {
-    if timeout {
-        t := A_TickCount
-        found := parent.FindFirst(scope, condition)
-        while !found && (A_TickCount - t) <= timeout {
-            Sleep(1)
-            found := parent.FindFirst(scope, condition)
-        }
-    }
-    else {
-        found := parent.FindFirst(scope, condition)
-        while !found {
-            Sleep(1)
-            found := parent.FindFirst(scope, condition)
-        }
-    }
-    return found
-}
-
 class Variant {
     Ptr => this.__Var.Ptr
     __New(type := 0, value := 0) {
@@ -778,6 +759,20 @@ class IUIAutomationDropTargetPattern extends IUnknownWrapperBase {
     }
 }
 class IUIAutomationElement extends IUnknownWrapperBase {
+    ; ==================================================
+    Wait(condition, scope := 4, timeout := -1) {
+        if timeout >= 0 {
+            start := A_TickCount
+            while !(found := this.FindFirst(scope, condition)) && (A_TickCount - start) < timeout 
+                Sleep(1)
+        }
+        else {
+            while !found := this.FindFirst(scope, condition) 
+                Sleep(1)
+        }
+        return found
+    }
+    ; ==================================================
     SetFocus() {
         ComCall(3, this)
     }
