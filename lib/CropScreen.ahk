@@ -61,18 +61,25 @@ CropScreen() {
     DllCall("SelectObject", "ptr", _bufDc, "ptr", _pen)
     DllCall("SelectObject", "ptr", _bufDc, "ptr", DllCall("GetStockObject", "int", 5))
 
-    win.OnMessage(0x0010, OnWM_CLOSE)
-    win.OnMessage(0x0014, OnWM_ERASEBKGND)
-    win.OnMessage(0x0020, OnWM_SETCURSOR)
-    win.OnMessage(0x0100, OnWM_KEYDOWN)
-    win.OnMessage(0x0200, OnWM_MOUSEMOVE)
-    win.OnMessage(0x0201, OnWM_LBUTTONDOWN)
-    win.OnMessage(0x0202, OnWM_LBUTTONUP)
-    win.OnMessage(0x0205, OnWM_RBUTTONUP)
-
+    procs := Map(
+        0x0010, OnWM_CLOSE,
+        0x0014, OnWM_ERASEBKGND,
+        0x0020, OnWM_SETCURSOR,
+        0x0100, OnWM_KEYDOWN,
+        0x0200, OnWM_MOUSEMOVE,
+        0x0201, OnWM_LBUTTONDOWN,
+        0x0202, OnWM_LBUTTONUP,
+        0x0205, OnWM_RBUTTONUP,
+    )
+    for msg, proc in procs {
+        OnMessage(msg, proc)
+    }
     win.Show("Maximize")
     _shown := true
     StartMessageLoop()
+    for msg, proc in procs {
+        OnMessage(msg, proc, 0)
+    }
     win.Destroy()
 
     res := ""
@@ -95,9 +102,8 @@ CropScreen() {
         height := NumGet(bitmap, 8, "int")
         pixelBytes := NumGet(bitmap, 18, "ushort") // 8
         bitmapData := Buffer(24 + stride * height)
-        loop height {
+        loop height 
             DllCall("RtlCopyMemory", "ptr", bitmapData.Ptr + (A_Index - 1) * stride + 24, "ptr", pData + (height - A_Index) * stride, "uptr", stride)
-        }
         NumPut("ptr", bitmapData.Ptr + 24, "uint", stride, "int", width, "int", height, "int", 4, bitmapData)
         res := {
             X: _lastSelectionRect.X1,
@@ -118,7 +124,9 @@ CropScreen() {
     DllCall("DeleteObject", "ptr", _nullClipRgn)
     return res
 
-    OnWM_CLOSE(this, wParam, lParam, msg) {
+    OnWM_CLOSE(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         if _shown {
             _shown := false
             DllCall("PostQuitMessage", "int", 0)
@@ -126,7 +134,9 @@ CropScreen() {
         return 0
     }
 
-    OnWM_MOUSEMOVE(this, wParam, lParam, msg) {
+    OnWM_MOUSEMOVE(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         mouseX := lParam & 0xffff
         mouseY := lParam >> 16
 
@@ -177,7 +187,9 @@ CropScreen() {
         return 0
     }
 
-    OnWM_LBUTTONDOWN(this, wParam, lParam, msg) {
+    OnWM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         _lButtonDown := true
         _lButtonDownX := lParam & 0xffff
         _lButtonDownY := lParam >> 16
@@ -185,33 +197,43 @@ CropScreen() {
         return 0
     }
 
-    OnWM_LBUTTONUP(this, wParam, lParam, msg) {
+    OnWM_LBUTTONUP(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         _lButtonDown := false
         DllCall("ReleaseCapture")
-        OnWM_CLOSE(this, 0, 0, 0)
+        OnWM_CLOSE(0, 0, 0, hwnd)
         return 0
     }
 
-    OnWM_RBUTTONUP(this, wParam, lParam, msg) {
+    OnWM_RBUTTONUP(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         _canceled := true
-        OnWM_CLOSE(this, 0, 0, 0)
+        OnWM_CLOSE(0, 0, 0, hwnd)
         return 0
     }
 
-    OnWM_KEYDOWN(this, wParam, lParam, msg) {
+    OnWM_KEYDOWN(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         if (wParam == 0x1B) {
             _canceled := true
-            OnWM_CLOSE(this, 0, 0, 0)
+            OnWM_CLOSE(0, 0, 0, hwnd)
         }
         return 0
     }
 
-    OnWM_ERASEBKGND(this, wParam, lParam, msg) {
+    OnWM_ERASEBKGND(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         DllCall("BitBlt", "ptr", _winDc, "int", 0, "int", 0, "int", A_ScreenWidth, "int", A_ScreenHeight, "ptr", _bkgDc, "int", 0, "int", 0, "uint", 0x00CC0020)
         return 0
     }
 
-    OnWM_SETCURSOR(this, wParam, lParam, msg) {
+    OnWM_SETCURSOR(wParam, lParam, msg, hwnd) {
+        if hwnd != win.Hwnd
+            return
         DllCall("SetCursor", "ptr", _cursor)
         return 0
     }
