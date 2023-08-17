@@ -1,4 +1,38 @@
-﻿GetSelection() {
+﻿GaussRand(mu := 0, sigma := 1) {
+    loop {
+        u1 := Random()
+        u2 := 1.0 - Random()
+        z := 1.7155277699214135 * (u1 - 0.5) / u2
+        zz := z * z / 4.0
+        if zz <= -Ln(u2)
+            break
+    }
+    return mu + z * sigma
+}
+
+StandardDeviation(nums) {
+    sum := mean := std := 0
+    for v in nums
+        sum += nums[A_Index]
+    mean := sum / nums.Length 
+    for v in nums
+        std += (nums[A_Index] - mean) ** 2
+    return Sqrt(std / nums.Length)
+}
+
+NormalVariate(mu := 0, sigma := 1) {
+    loop {
+        u1 := Random()
+        u2 := 1.0 - Random()
+        z := 1.7155277699214135 * (u1 - 0.5) / u2
+        zz := z * z / 4.0
+        if zz <= -Ln(u2)
+            break
+    }
+    return mu + z * sigma
+}
+
+GetSelection() {
     before := A_Clipboard
     A_Clipboard := ""
     Send("^c")
