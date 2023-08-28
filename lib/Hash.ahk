@@ -1,6 +1,7 @@
-﻿; MsgBox CryptBinaryToString(HashString("a", "MD5", "UTF-8"))
-; MsgBox CryptBinaryToString(HashNumber(97, "MD5", "char"))
-; MsgBox CryptBinaryToString(HashFile(A_ScriptFullPath, "SHA256"))
+﻿; MsgBox HashString("a", "MD5", "UTF-8").ToString()
+; MsgBox HashNumber(97, "MD5", "char").ToString()
+; MsgBox HashFile(A_ScriptFullPath, "SHA256").ToString()
+; MsgBox Hash(Buffer(100, 0), "MD5").ToString()
 
 HashString(str, algorithm, encoding := "UTF-8") {
     if encoding = "UTF-16" || encoding = "CP1200"
@@ -93,44 +94,15 @@ Hash(data, algorithm) {
         }
         DllCall("BCrypt\BCryptCloseAlgorithmProvider", "ptr", hAlg, "uint", 0)
     }
-    return IsSet(status) && !status ? bHash : ""
-}
+    if IsSet(status) && !status {
+        bHash.ToString := CryptBinaryToString
+        return bHash
+    }
 
-/*
-@CRYPT_STRING_BASE64HEADER           0x00000000
-@CRYPT_STRING_BASE64                 0x00000001
-@CRYPT_STRING_BINARY                 0x00000002
-@CRYPT_STRING_BASE64REQUESTHEADER    0x00000003
-@CRYPT_STRING_HEX                    0x00000004
-@CRYPT_STRING_HEXASCII               0x00000005
-@CRYPT_STRING_BASE64_ANY             0x00000006
-@CRYPT_STRING_ANY                    0x00000007
-@CRYPT_STRING_HEX_ANY                0x00000008
-@CRYPT_STRING_BASE64X509CRLHEADER    0x00000009
-@CRYPT_STRING_HEXADDR                0x0000000a
-@CRYPT_STRING_HEXASCIIADDR           0x0000000b
-@CRYPT_STRING_HEXRAW                 0x0000000c
-@CRYPT_STRING_BASE64URI              0x0000000d
-
-@CRYPT_STRING_ENCODEMASK             0x000000ff
-@CRYPT_STRING_RESERVED100            0x00000100
-@CRYPT_STRING_RESERVED200            0x00000200
-
-@CRYPT_STRING_PERCENTESCAPE          0x08000000	// base64 formats only
-@CRYPT_STRING_HASHDATA               0x10000000
-@CRYPT_STRING_STRICT                 0x20000000
-@CRYPT_STRING_NOCRLF                 0x40000000
-@CRYPT_STRING_NOCR                   0x80000000
-*/
-CryptBinaryToString(binary, flag := 0x4000000C) {
-    DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", flag, "ptr", 0, "uint*", &cnt := 0)
-    VarSetStrCapacity(&str, cnt * 2)
-    DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", flag, "wstr", str, "uint*", cnt)
-    return str
-}
-
-CryptStringToBinary(str, flag := 0x00000004) {
-    DllCall("crypt32\CryptStringToBinaryW", "wstr", str, "uint", StrLen(str), "uint", flag, "ptr", 0, "uint*", &bytes := 0, "ptr", 0, "ptr", 0)
-    DllCall("crypt32\CryptStringToBinaryW", "wstr", str, "uint", StrLen(str), "uint", flag, "ptr", binary := Buffer(bytes), "uint*", bytes, "ptr", 0, "ptr", 0)
-    return binary
+    CryptBinaryToString(binary) {
+        DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", 0x4000000C, "ptr", 0, "uint*", &cnt := 0)
+        VarSetStrCapacity(&str, cnt * 2)
+        DllCall("crypt32\CryptBinaryToStringW", "ptr", binary, "uint", binary.Size, "uint", 0x4000000C, "wstr", str, "uint*", cnt)
+        return str
+    }
 }
