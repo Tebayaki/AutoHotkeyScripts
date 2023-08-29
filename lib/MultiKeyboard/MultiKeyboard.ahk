@@ -51,18 +51,18 @@ class MultiKeyboard {
 
     __Delete() {
         if MultiKeyboard.__ini {
-            DllCall("MultiKeyboard\UnInstallHook")
+            DllCall("MultiKeyboard\UninstallHook")
             MultiKeyboard.__ini := false
         }
         if this.__module
             DllCall("FreeLibrary", "ptr", this.__module)
-        for callback in this.__keyBindingMap {
+        for , callback in this.__keyBindingMap {
             if callback
                 CallbackFree(callback)
         }
     }
 
-    CreateKeyBinding(keyboardID, keyname, isDown, callback){
+    CreateKeyBinding(keyboardID, keyname, isDown, callback) {
         if !vk := GetKeyVK(keyname)
             throw Error("Invalid key")
         mapkey := keyboardID keyname isDown
@@ -71,7 +71,7 @@ class MultiKeyboard {
         return DllCall("MultiKeyboard\CreateKeyBinding", "ptr", keyboardID, "uchar", vk, "uchar", isDown, "ptr", this.__keyBindingMap[mapkey] := CallbackCreate(callback))
     }
 
-    DeleteKeyBinding(keyboardID, keyname, isDown){
+    DeleteKeyBinding(keyboardID, keyname, isDown) {
         if !vk := GetKeyVK(keyname)
             throw Error("Invalid key")
         mapkey := keyboardID keyname isDown
