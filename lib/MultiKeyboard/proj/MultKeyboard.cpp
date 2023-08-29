@@ -163,13 +163,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
         GetGUIThreadInfo(NULL, &guiThreadInfo);
         GetClassName(guiThreadInfo.hwndFocus, className, UWP_CLASSNAME_LEN);
         if (!wcscmp(className, UWP_CLASSNAME)) {
-			return (GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT) ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
+            return (GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT) ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
         }
 
         g_rawKBInputQueue.emplace();
         UINT cbRawInput = sizeof(KBRAWINPUT);
         if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &g_rawKBInputQueue.back(), &cbRawInput, sizeof(RAWINPUTHEADER)) != sizeof(KBRAWINPUT)) {
-			return (GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT) ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
+            return (GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT) ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
         }
         std::map<UINT64, KEYEVENT>::iterator iter = g_keyBindingMap.find(GET_KEYBINDING_MAP_KEY(g_rawKBInputQueue.back().VKey, g_rawKBInputQueue.back().Flags & 1, g_rawKBInputQueue.back().hDevice));
         g_rawKBInputQueue.back().callback = (iter == g_keyBindingMap.end()) ? NULL : iter->second;
@@ -229,15 +229,4 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
         return 1;
     }
     return CallNextHookEx(NULL, code, wParam, lParam);
-}
-
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-    switch (ul_reason_for_call) {
-        case DLL_PROCESS_ATTACH:
-        case DLL_THREAD_ATTACH:
-        case DLL_THREAD_DETACH:
-        case DLL_PROCESS_DETACH:
-            break;
-    }
-    return TRUE;
 }
