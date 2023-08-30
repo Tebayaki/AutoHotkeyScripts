@@ -35,6 +35,8 @@ class Printer {
         static _ := DllCall("GetStdHandle", "uint", -11, "ptr") || DllCall("AllocConsole")
         output := ""
         for v in values {
+            if A_Index > 1
+                output .= this.Separator
             if IsSet(v) {
                 if v is Primitive
                     output .= v
@@ -43,8 +45,6 @@ class Printer {
             }
             else
                 output .= "unset"
-            if A_Index < values.Length
-                output .= this.Separator
         }
         FileAppend(output this.End, this.OutputFile, this.Encoding)
         return
@@ -66,25 +66,25 @@ class Printer {
             if deepth <= this.BreakDeepth {
                 output .= "[`n"
                 for v in value {
+                    if A_Index > 1
+                        output .= ",`n"
                     output .= indent this.IndentUnit
                     if IsSet(v)
                         stringify(v, deepth + 1, indent this.IndentUnit)
                     else
                         output .= "unset"
-                    if A_Index < value.Length
-                        output .= ",`n"
                 }
                 output .= "`n" indent "]"
             }
             else {
                 output .= "["
                 for v in value {
+                    if A_Index > 1
+                        output .= ", "
                     if IsSet(v)
                         stringify(v, deepth + 1, "")
                     else
                         output .= "unset"
-                    if A_Index < value.Length
-                        output .= ", "
                 }
                 output .= "]"
             }
@@ -94,28 +94,28 @@ class Printer {
             if deepth <= this.BreakDeepth {
                 output .= "{`n"
                 for k, v in value {
+                    if A_Index > 1
+                        output .= ",`n"
                     if k is String
                         k := '"' k '"'
                     else if !(k is Number)
                         k := Type(k) "_" ObjPtr(k)
                     output .= indent this.IndentUnit k ': '
                     stringify(v, deepth + 1, indent this.IndentUnit)
-                    if A_Index < value.Count
-                        output .= ", `n"
                 }
                 output .= "`n" indent "}"
             }
             else {
                 output .= "{"
                 for k, v in value {
+                    if A_Index > 1
+                        output .= ", "
                     if k is String
                         k := '"' k '"'
                     else if !(k is Number)
                         k := Type(k) "_" ObjPtr(k)
                     output .= k ': '
                     stringify(v, deepth + 1, "")
-                    if A_Index < value.Count
-                        output .= ", "
                 }
                 output .= "}"
             }
@@ -125,20 +125,20 @@ class Printer {
             if deepth <= this.BreakDeepth {
                 output .= "{`n"
                 for k, v in value.OwnProps() {
+                    if A_Index > 1
+                        output .= ",`n"
                     output .= indent this.IndentUnit k ": "
                     stringify(v, deepth + 1, indent this.IndentUnit)
-                    if A_Index < ObjOwnPropCount(value)
-                        output .= ",`n"
                 }
                 output .= "`n" indent "}"
             }
             else {
                 output .= "{"
                 for k, v in value.OwnProps() {
+                    if A_Index > 1
+                        output .= ", "
                     output .= k ": "
                     stringify(v, deepth + 1, "")
-                    if A_Index < ObjOwnPropCount(value)
-                        output .= ", "
                 }
                 output .= "}"
             }
