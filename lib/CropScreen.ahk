@@ -112,7 +112,7 @@ CropScreen() {
             Height: _lastSelectionRect.H,
             HBitmap: { Ptr: hBmp, __Delete: (this) => DllCall("DeleteObject", "ptr", this) },
             BitmapData: bitmapData,
-            Show: (this) => (ui := Gui(), ui.AddPicture(, "HBITMAP:" this.HBitmap.Ptr), ui.Show()),
+            Show: (this) => (ui := Gui(), ui.AddPicture(, "HBITMAP:*" this.HBitmap.Ptr), ui.Show()),
         }
     }
 
