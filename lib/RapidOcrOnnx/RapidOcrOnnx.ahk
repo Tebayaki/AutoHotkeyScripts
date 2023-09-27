@@ -1,5 +1,5 @@
 /*
-@Example
+@example ; recognize from file
 ocr := RapidOcrOnnx()
 param := RapidOcrParam.Default
 result := ocr.DetectFile("C:\Users\Jensen\Desktop\Snipaste_2023-07-08_21-50-03.jpg")
@@ -11,6 +11,13 @@ for block in result {
     "Text: " block.Text
 }
 MsgBox result.ToString()
+
+@example ; recognize from hbitmap
+#Include<CropScreen>
+ocr := RapidOcrOnnx()
+if res := CropScreen() {
+    MsgBox ocr.DetectHBitmap(res.HBitmap).ToString()
+}
 */
 class RapidOcrOnnx {
     static DllPath := A_LineFile "\..\RapidOcrOnnx.dll"

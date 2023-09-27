@@ -1,16 +1,18 @@
 ﻿/*
 @Example
 ; 选择屏幕范围并显示
-res := CropScreen()
-MsgBox(res.X " " res.Y " " res.Width " " res.Height)
-res.Show()
+if res := CropScreen() {
+    MsgBox(res.X " " res.Y " " res.Width " " res.Height)
+    res.Show()
+}
 
 @Example
 ; ocr屏幕范围
 #Include <RapidOcrOnnx\RapidOcrOnnx>
 ocr := RapidOcrOnnx()
-res := CropScreen()
-MsgBox ocr.DetectHBitmap(res.HBitmap).ToString()
+if res := CropScreen() {
+    MsgBox ocr.DetectHBitmap(res.HBitmap).ToString()
+}
 */
 CropScreen() {
     _thickness := 3
