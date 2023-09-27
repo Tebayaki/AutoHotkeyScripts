@@ -59,7 +59,7 @@ Shell_GetAllOpenedFolders() {
     return folders
 }
 
-Shell_UnZipFileTo(zip, dest) {
+Shell_UnZipFileTo(src, dest) {
     shell := ComObject("Shell.Application")
     dest := shell.NameSpace(dest)
     src := shell.NameSpace(src)
