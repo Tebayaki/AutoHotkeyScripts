@@ -12,7 +12,13 @@ OnDrop(guiObj, data) {
         guiObj.Value := "*w500 *h-1 hbitmap:*" data.BMP.Handle
     }
     else if data.Text {
-        MsgBox(data.Text)
+        guiObj.Text := data.Text
+    }
+    else if data.Files {
+        paths := ""
+        for path in data.Files
+            paths .= path "`n"
+        guiObj.Text := paths
     }
 }
 */
@@ -99,6 +105,31 @@ RegisterDragDrop(guiObj, callback) {
             effect := 1 ; DROPEFFECT_COPY
         }
 
+        NumPut("ushort", 15, formatEtc, 0) ; cfFormat = CF_HDROP
+        NumPut("uint", 1, formatEtc, A_PtrSize * 2 + 8) ; tymed = TYMED_HGLOBAL
+        hr := ComCall(3, pDataObj, "ptr", formatEtc, "ptr", stgMedium, "int")
+        if hr == 0 {
+            if hDrop := NumGet(stgMedium, A_PtrSize, "ptr") {
+                cnt := DllCall("shell32\DragQueryFileW", "ptr", hDrop, "uint", -1, "ptr", 0, "uint", 0, "uint")
+                files := []
+                loop cnt {
+                    if cc := DllCall("shell32\DragQueryFileW", "ptr", hDrop, "uint", A_Index - 1, "ptr", 0, "uint", 0, "uint") {
+                        VarSetStrCapacity(&path, cc + 1)
+                        if DllCall("shell32\DragQueryFileW", "ptr", hDrop, "uint", A_Index - 1, "str", &path, "uint", cc + 1, "uint") {
+                            files.Push(path)
+                        }
+                    }
+                }
+                if files.Length == 0 {
+                    files := ""
+                }
+                if NumGet(stgMedium, A_PtrSize * 2, "ptr") == 0 {
+                    DllCall("GlobalFree", "ptr", hDrop)
+                }
+            }
+            effect := 1 ; DROPEFFECT_COPY
+        }
+
         NumPut("ushort", 2, formatEtc, 0) ; cfFormat = CF_BITMAP
         NumPut("uint", 16, formatEtc, A_PtrSize * 2 + 8) ; tymed = TYMED_GDI
         hr := ComCall(3, pDataObj, "ptr", formatEtc, "ptr", stgMedium, "int")
@@ -113,7 +144,7 @@ RegisterDragDrop(guiObj, callback) {
 
         if effect {
             dropTarget := ObjFromPtrAddRef(NumGet(this, 8 * A_PtrSize, "ptr"))
-            (dropTarget._callback)(dropTarget._guiObj, { Text: text ?? "", BMP: bmp ?? "" })
+            (dropTarget._callback)(dropTarget._guiObj, { Text: text ?? "", BMP: bmp ?? "", Files: files ?? "" })
         }
         NumPut("uint", effect, pdwEffect)
         return 0
