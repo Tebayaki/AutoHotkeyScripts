@@ -1,1 +1,40 @@
-# My AutoHotkey Scripts & Libraries Collection
+# AutoHotkeyScripts  
+我的AutoHotkey库和脚本合集。
+## 📁lib
+- [FiGLet](lib/FIGLet/) --- 生成ASCII字符画  
+- [GetCaretPosEx](lib/GetCaretPosEx/) --- 获取文本插入点的坐标。  
+- [MultiKeyboard](lib/MultiKeyboard/) --- 识别来自不同键盘的按键。  
+- [RapidOcrOnnex](lib/RapidOcrOnnx/) --- RapidOcr的AHK封装。  
+- [BitmapDumper.ahk](lib/BitmapDumper.ahk) --- 将HBITMAP保存为图片文件。  
+- [Calc.ahk](lib/Calc.ahk) --- 动态解释运行数学表达式字符串，并返回结果。类似简化版的Eval。  
+- [ColorDiff.ahk](lib/ColorDiff.ahk) --- 量化计算两个颜色的色差。  
+- [CropScreen.ahk](lib/CropScreen.ahk) --- 使用鼠标在屏幕上截图，并返回BITMAP。可传递结果给其他组件使用。  
+- [DisplaySwitch.ahk](lib/DisplaySwitch.ahk) --- 切换多屏模式，类似于Win+P。支持智能切换单屏和多屏模式。  
+- [DrawRectFrame.ahk](lib/DrawRectFrame.ahk) --- 在屏幕上绘制矩形框。可用于高亮提示。  
+- [DTW.ahk](lib/DTW.ahk) --- 使用AHK实现的DTW（动态时间规整）算法。  
+- [FormatMessage.ahk](lib/FormatMessage.ahk) --- 将错误码转换为可阅读文本。  
+- [GetDependencies.ahk](lib/GetDependencies.ahk) --- 查询EXE或DLL文件的依赖。  
+- [Hash.ahk](lib/Hash.ahk) --- Hash计算库。支持MD5，SHA256等多种哈希算法。  
+- [IME.ahk](lib/IME.ahk) --- IME（输入法）控制库。可获取、切换当前输入法及输入法的中英文状态。  
+- [InjectLib.ahk](lib/InjectLib.ahk) --- 将DLL注入到其他进程。  
+- [JSEval.ahk](lib/JSEval.ahk) --- 调用Javascript的Eval函数。
+- [MCode.ahk](lib/MCode.ahk) --- 将机器码转换为可调用的函数。  
+- [MemoryMappedFile.ahk](lib/MemoryMappedFile.ahk) --- 内存映射文件的简单AHK封装。可用于进程间通信。  
+- [MSAA.ahk](lib/MSAA.ahk) --- Microsoft Active Accessibility（MSAA/ACC）客户端的AHK简单封装。用于UI自动化。  
+- [MsgBoxAt.ahk](lib/MsgBoxAt.ahk) --- 同MsgBox，可指定窗口的弹出位置。  
+- [Print.ahk](lib/Print.ahk) --- 格式化打印对象到控制台。支持数组、Map等非字面值对象类型。  
+- [ReadProcessStdOut.ahk](lib/ReadProcessStdOut.ahk) --- 启动进程，并获取其标准输出。  
+- [RegExMatchAll.ahk](lib/RegExMatchAll.ahk) --- 全局模式正则匹配。  
+- [RegisterDragDrop.ahk](lib/RegisterDragDrop.ahk) --- 为Gui提供文本、文件、图片的拖拽支持。  
+- [RemoteProcess.ahk](lib/RemoteProcess.ahk) --- 读写其他进程的内存。支持多级指针寻址、模块定位、函数定位、函数调用。  
+- [RunAs.ahk](lib/RunAs.ahk) --- 使用指定权限运行脚本。支持提权、降权、令牌窃取。可获取System权限、UIAccess权限。  
+- [Shell.ahk](lib/Shell.ahk) --- 对资源管理器（Shell）对象的简单AHK封装。  
+- [Sort.ahk](lib/Sort.ahk) --- 使用AHK实现的排序算法合集。支持冒泡排序、选择排序、插入排序、快速排序。支持按中文拼音排序。  
+- [TinyCC.ahk](lib/TinyCC.ahk) --- Tiny C Compiler(TCC)的AHK封装。可在数毫秒内动态编译C语言并执行，为关键代码提升数百倍的运行效率。  
+- [ToolHelp.ahk](lib/ToolHelp.ahk) --- ToolHelp系列函数的AHK封装。用于遍历进程、线程、模块信息。  
+- [TouchpadRawInput.ahk](lib/TouchpadRawInput.ahk) --- 获取触摸板触控信息。  
+- [UIAutomationClient.ahk](lib/UIAutomationClient.ahk) --- UIAutomation客户端的AHK封装。用于UI自动化。  
+- [VirtualDesktop.ahk](lib/VirtualDesktop.ahk) --- 控制虚拟桌面。  
+- [Where.ahk](lib/Where.ahk) --- 获取可执行文件的路径，类似Windows中的where和Linux中的which命令。  
+- [WindowsHookEx.ahk](lib/WindowsHookEx.ahk) --- Windows钩子函数的简单AHK封装。可用于拦截底层的鼠标、键盘事件。  
+- [WRTClipboard.ahk](lib/WRTClipboard.ahk) --- Windows Runtime Api中的Clipboard类的AHK封装。可操作Win+V调出的剪贴板历史记录。  
