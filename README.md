@@ -1,7 +1,7 @@
 # AutoHotkeyScripts  
 我的AutoHotkey库和脚本合集。
 ## 📁lib
-- [FiGLet](lib/FIGLet/) --- 生成ASCII字符画  
+- [FIGLet](lib/FIGLet/) --- 生成ASCII字符画  
 - [GetCaretPosEx](lib/GetCaretPosEx/) --- 获取文本插入点的坐标。  
 - [MultiKeyboard](lib/MultiKeyboard/) --- 识别来自不同键盘的按键。  
 - [RapidOcrOnnex](lib/RapidOcrOnnx/) --- RapidOcr的AHK封装。  
