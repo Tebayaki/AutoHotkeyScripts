@@ -1,3 +1,6 @@
 [submodule "HotGestures"]
 	path = lib/HotGestures
 	url = https://github.com/Tebayaki/HotGestures.git
+[submodule "lib/ddddocr"]
+	path = lib/ddddocr
+	url = https://github.com/Tebayaki/ddddocr-ahk.git
