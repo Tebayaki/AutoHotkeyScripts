@@ -31,7 +31,10 @@
 
     if stdin !== "" {
         DllCall("CloseHandle", "ptr", hReadPipeIn)
-        if !DllCall("WriteFile", "ptr", hWritePipeIn, "astr", stdin, "uint", StrPut(stdin, "cp0") - 1, "uint*", &lpNumberOfBytesWritten := 0, "ptr", 0){
+        len := StrPut(stdin, encoding)
+        buf := Buffer(len)
+        StrPut(stdin, buf, encoding)
+        if !DllCall("WriteFile", "ptr", hWritePipeIn, "ptr", buf, "uint", len - 1, "uint*", &lpNumberOfBytesWritten := 0, "ptr", 0){
             DllCall("CloseHandle", "ptr", hWritePipeIn)
             throw OSError()
         }
